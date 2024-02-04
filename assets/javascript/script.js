@@ -70,5 +70,24 @@ const getWeatherDetails = async (cityName, latitude, longitude) => {
         alert("An error occurred while fetching the weather forecast!");
     }
 
-
 };
+
+const getCityCoordinates = async () => {
+    const cityName = cityInput.value.trim();
+    if (cityName === "") return;
+
+    const API_URL= `https://api.openweathermap.org/geo/1.0/direct?q=${cityName}&limit=1&appid=${API_KEY}`;
+    
+    try {
+        const reposnse = await fetch(API_URL);
+        const data = await response.json();
+
+        if (!data.length) return alert(`NO coordinates found for ${cityName}`);
+        const {lat, lon, name } = data[0];
+        await getWeatherDetails(name, lat, lon);
+    } catch (error) {
+        alert("An error occurred while fetching the coordinates!");
+
+    }
+    
+}
