@@ -9,7 +9,10 @@ body {
     background: rgb(238,174,202);
     background: radial-gradient(circle, rgba(238,174,202,1) 0%, rgba(148,187,233,1) 100%); ;
 }
-
+h1 {
+    color: #fff;
+    text-align: center;
+}
 .container {
     border: 5px solid lightgray;
     display: flex;
@@ -83,4 +86,71 @@ body {
 }
 .citysearch .location-btn:hover {
     background: royalblue;
+}
+.weather-data {
+    width: 100%;
+}
+
+.weather-data .current-weather {
+    color: white;
+    background: lightgray;
+    border-radius: 10px;
+    padding: 20px 70px 20px 20px;
+    display: flex;
+    justify-content: space-between;
+    border: 5px solid royalblue;
+
+}
+.current-weather h2 {
+    font-weight: 700;
+    font-size: 1.7rem;
+}
+
+.weather-data h6 {
+    margin-top: 12px;
+    font-size: 1rem;
+    font-weight: 500;
+    
+}
+.current-weather .icon {
+    text-align: center;
+}
+.current-weather .icon img {
+    max-width: 120px;
+    margin-top: -15px;
+}
+.current-weather .icon h6 {
+    margin-top: -10;
+    text-transform: capitalize;
+}
+h2 {
+    color: #fff;
+    text-align: center;
+}
+.days-forcast h2 {
+    margin: 20px 0;
+    font-size: 1.5rem;
+}
+.days-forcast .weather-cards {
+    display: flex;
+    gap:20px;
+
+}
+.weather-cards .card {
+    color: #fff;
+    padding: 18px 16px;
+    list-style: none;
+    width: calc(100% / 5);
+    background: lightgrey;
+    border: 5px solid royalblue;
+    border-radius: 10px;
+}
+.weather-cards .card h3 {
+    font-size: 1.3rem;
+    font-weight: 600;
+}
+.weather-cards .card img {
+    max-width: 70px;
+    margin: 5px 0 -12px 0;
+
 }
