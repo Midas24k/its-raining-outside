@@ -17,3 +17,68 @@ body {
     padding: 30px;
    
 }
+.citysearch {
+    border: 5px solid royalblue;
+    border-radius: 20px;
+    background-color: lightgray;
+    text-align: center;
+    color: whitesmoke;
+    width: 550px;
+}
+
+.citysearch input {
+    border: 1px solid black;
+    outline: none;
+    background: #ebfffc;
+    color: #555;
+    padding: 0px 17px;
+    height: 46px;
+    width:100%;
+    border-radius: 4px;
+    font-size: 18px;
+}
+.citysearch input:focus {
+    padding:0 16px;
+    border: 2px solid black;
+}
+.citysearch .divider {
+    height: 1px;
+    width: 100%;
+    margin: 25px 0;
+    background: #BBBBBB;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.citysearch .divider::before{
+    content:"or";
+    color: black;
+    font-size: 1.18rem;
+    padding: 0 15px;
+    margin: -4px;
+    background: lightgray;
+}
+.citysearch .button {
+    width: 100%;
+    padding: 10px 0;
+    border: none;
+    outline:none;
+    background:lightgray;
+    border-radius: 4px;
+    font-size: 1rem;
+    color: black;
+    cursor: pointer;
+    transition: 0.2s ease;
+}
+.citysearch .search-btn {
+    background-color: skyblue;
+}
+.citysearch .search-btn:hover {
+    background: royalblue;   
+}
+.citysearch .location-btn {
+    background:skyblue;
+}
+.citysearch .location-btn:hover {
+    background: royalblue;
+}
