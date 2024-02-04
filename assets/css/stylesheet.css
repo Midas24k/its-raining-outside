@@ -33,9 +33,10 @@ body {
     color: #555;
     padding: 0px 17px;
     height: 46px;
-    width:100%;
+    width:75%;
     border-radius: 4px;
     font-size: 18px;
+    text-align: center;
 }
 .citysearch input:focus {
     padding:0 16px;
@@ -72,6 +73,7 @@ body {
 }
 .citysearch .search-btn {
     background-color: skyblue;
+    
 }
 .citysearch .search-btn:hover {
     background: royalblue;   
