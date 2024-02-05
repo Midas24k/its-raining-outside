@@ -30,9 +30,13 @@ const createWeatherCard = (cityName, weatherItem, index) => {
     }
 }
 
+const saveLastSearchedCity = (cityName) => {
+    localStorage.setItem("lastSearchedCity", cityName);
+}
 
-
-
+const getLastSearchedCity = () => {
+    return localStorage.getItem("lastSearchedCity") || "";
+}
 
 const getWeatherDetails = async (cityName, latitude, longitude) => {
     const WEATHER_API_URL = `https://api.openweathermap.org/data/2.5/forecast?lat=${latitude}&lon=${longitude}&appid=${API_KEY}`;
@@ -46,9 +50,9 @@ const getWeatherDetails = async (cityName, latitude, longitude) => {
             const forecastDate = new Date(forecast.dt_txt).getDate();
             if (!uniqueForecastDays.includes(forecastDate)) {
                 return uniqueForecastDays.push(forecastDate);
-            }  
+            }
         });
-   
+
         cityInput.value = "";
         currentWeatherDiv.innerHTML = "";
         weatherCardsDiv.innerHTML = "";
@@ -76,23 +80,49 @@ const getCityCoordinates = async () => {
     const cityName = cityInput.value.trim();
     if (cityName === "") return;
 
-    const API_URL= `https://api.openweathermap.org/geo/1.0/direct?q=${cityName}&limit=1&appid=${API_KEY}`;
-    
+    const API_URL = `https://api.openweathermap.org/geo/1.0/direct?q=${cityName}&limit=1&appid=${API_KEY}`;
+
     try {
-        const reposnse = await fetch(API_URL);
+        const response = await fetch(API_URL);
         const data = await response.json();
 
         if (!data.length) return alert(`NO coordinates found for ${cityName}`);
-        const {lat, lon, name } = data[0];
+        const { lat, lon, name } = data[0];
         await getWeatherDetails(name, lat, lon);
     } catch (error) {
         alert("An error occurred while fetching the coordinates!");
 
     }
-    
+
+    const getUserCoordinates = () => {
+        navigator.geolocation.getCurrentPosition(
+            async position => {
+                const { latitude, longitude } = position.coords;
+                const API_URL = `https://api.openweathermap.org/geo/1.0/reverse?lat=${latitude}&lon=${longitude}&limit=1&appid=${API_KEY}`;
+
+                try {
+                    const response = await fetch(API_URL);
+                    const data = await response.json();
+
+                    const { name } = data[0];
+                    await getWeatherDetails(name, latitude, longitude);
+                } catch (error) {
+                    alert("An error occurred while fetching the city name!");
+                }
+            },
+            error => {
+                if (error.code === error.PERMISSION_DENIED) {
+                    alert("Geolocation request denied. Please reset location permission to grant access again.");
+                } else {
+                    alert("Geolocation request error. Please reset location permission.");
+                }
+            }
+        );
+    }
 }
 
 
-locationButton.addEventListener("click", getUserCoordinates);
+
 searchButton.addEventListener("click", getCityCoordinates);
+locationButton.addEventListener("click", getUserCoordinates);
 cityInput.addEventListener("keyup", e => e.key === "Enter" && getCityCoordinates());
