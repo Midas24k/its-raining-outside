@@ -43,10 +43,11 @@ const getWeatherDetails = async (cityName, latitude, longitude) => {
 
     try {
         const response = await fetch(WEATHER_API_URL);
+        console.log("I work")
         const data = await response.json();
 
         const uniqueForecastDays = [];
-        const fiveDaysForcast = data.list.filter(forcast => {
+        const fiveDaysForecast = data.list.filter(forecast => {
             const forecastDate = new Date(forecast.dt_txt).getDate();
             if (!uniqueForecastDays.includes(forecastDate)) {
                 return uniqueForecastDays.push(forecastDate);
@@ -76,53 +77,31 @@ const getWeatherDetails = async (cityName, latitude, longitude) => {
 
 };
 
-const getCityCoordinates = async () => {
-    const cityName = cityInput.value.trim();
-    if (cityName === "") return;
-
-    const API_URL = `https://api.openweathermap.org/geo/1.0/direct?q=${cityName}&limit=1&appid=${API_KEY}`;
-
-    try {
-        const response = await fetch(API_URL);
-        const data = await response.json();
-
-        if (!data.length) return alert(`NO coordinates found for ${cityName}`);
-        const { lat, lon, name } = data[0];
-        await getWeatherDetails(name, lat, lon);
-    } catch (error) {
-        alert("An error occurred while fetching the coordinates!");
-
-    }
-
-    const getUserCoordinates = () => {
+const getGeoCoordinates = () => {
         navigator.geolocation.getCurrentPosition(
-            async position => {
-                const { latitude, longitude } = position.coords;
+            position => {
+                const{ latitude, longitude } = position.coords;
                 const API_URL = `https://api.openweathermap.org/geo/1.0/reverse?lat=${latitude}&lon=${longitude}&limit=1&appid=${API_KEY}`;
-
-                try {
-                    const response = await fetch(API_URL);
-                    const data = await response.json();
-
+                fetch(API_URL).then(response => response.json()).then(data => {
                     const { name } = data[0];
-                    await getWeatherDetails(name, latitude, longitude);
-                } catch (error) {
-                    alert("An error occurred while fetching the city name!");
-                }
+                    getWeatherDetails(name, latitude, longitude);
+                }).catch(() => {
+                    alert("ERROR occured when fetching city name!");
+                });
+
             },
             error => {
                 if (error.code === error.PERMISSION_DENIED) {
-                    alert("Geolocation request denied. Please reset location permission to grant access again.");
+                    alert("Geolocation request denied. Please reset permissions");
                 } else {
-                    alert("Geolocation request error. Please reset location permission.");
+                    alert("Geolocation request error.");
                 }
-            }
-        );
-    }
+
+            });
+        
+        
 }
 
-
-
-searchButton.addEventListener("click", getCityCoordinates);
-locationButton.addEventListener("click", getUserCoordinates);
+searchButton.addEventListener("click", getGeoCoordinates);
+locationButton.addEventListener("click", getGeoCoordinates);
 cityInput.addEventListener("keyup", e => e.key === "Enter" && getCityCoordinates());
