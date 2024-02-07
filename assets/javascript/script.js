@@ -4,14 +4,16 @@ const locationButton = document.querySelector(".location-btn");
 const currentWeatherDiv = document.querySelector(".current-weather");
 const weatherCardsDiv = document.querySelector(".weather-cards");
 const lastSearchedCityElement = document.getElementById("lastSearchedCity");
+
 const API_KEY = "6d2c5466092de2babc8fd56a62672dee";
 
-
 const createWeatherCard = (cityName, weatherItem, index) => {
+    const tempInFahrenheit = ((weatherItem.main.temp - 273.15) * 9/5) + 32;
+   
     if (index === 0) {
         return `<div class="details">
                     <h2>${cityName} (${weatherItem.dt_txt.split(" ")[0]})</h2>
-                    <h6>Temperature: ${(weatherItem.main.temp - 273.15).toFixed(2)}°F</h6>
+                    <h6>Temperature: ${tempInFahrenheit.toFixed(2)}°F</h6>
                     <h6>Wind: ${weatherItem.wind.speed} M/S</h6>
                     <h6>Humidity: ${weatherItem.main.humidity}%</h6>
                 </div>
@@ -23,7 +25,7 @@ const createWeatherCard = (cityName, weatherItem, index) => {
         return `<li class="card">
                     <h3>(${weatherItem.dt_txt.split(" ")[0]})</h3>
                     <img src="https://openweathermap.org/img/wn/${weatherItem.weather[0].icon}@4x.png" alt="weather-icon">
-                    <h6>Temp: ${(weatherItem.main.temp - 273.15).toFixed(2)}°F</h6>
+                    <h6>Temp: ${tempInFahrenheit.toFixed(2)}°F</h6>
                     <h6>Wind: ${weatherItem.wind.speed} M/S</h6>
                     <h6>Humidity: ${weatherItem.main.humidity}%</h6>
                 </li>`;
@@ -39,7 +41,7 @@ const getLastSearchedCity = () => {
 }
 
 const getWeatherDetails = async (cityName, latitude, longitude) => {
-    const WEATHER_API_URL = `https://api.openweathermap.org/data/2.5/forecast?lat=${latitude}&lon=${longitude}&appid=${API_KEY}`;
+    const WEATHER_API_URL = `https://api.openweathermap.org/data/2.5/forecast?lat=${latitude}&lon=${longitude}&=units.imperial&appid=${API_KEY}`;
 
     try {
         const response = await fetch(WEATHER_API_URL);
@@ -99,7 +101,7 @@ const getGeoCoordinates = () => {
         navigator.geolocation.getCurrentPosition(
             position => {
                 const{ latitude, longitude } = position.coords;
-                const API_URL = `https://api.openweathermap.org/geo/1.0/reverse?lat=${latitude}&lon=${longitude}&limit=1&appid=${API_KEY}`;
+                const API_URL = `https://api.openweathermap.org/geo/1.0/reverse?lat=${latitude}&lon=${longitude}&=units.imperial&limit=1&appid=${API_KEY}`;
                 fetch(API_URL).then(response => response.json()).then(data => {
                     const { name } = data[0];
                     getWeatherDetails(name, latitude, longitude);
