@@ -76,6 +76,24 @@ const getWeatherDetails = async (cityName, latitude, longitude) => {
     }
 
 };
+const getCityCoordinates = async () => {
+    const cityName = cityInput.value.trim();
+    if(cityName === "") return;
+
+    const API_URL = `https://api.openweathermap.org/geo/1.0/direct?q=${cityName}&=limit=1&appid=${API_KEY}`;
+
+    try {
+        const response = await fetch(API_URL);
+        const data = await response.json();
+        
+        if (!data.length) return alert(`No coordinates found for ${cityName}`);
+        const { lat, lon , name } = data [0];
+        await getWeatherDetails(name, lat, lon);
+
+    } catch (error) {
+        alert("An error occurred while fetching the coordinates!");
+    }
+}
 
 const getGeoCoordinates = () => {
         navigator.geolocation.getCurrentPosition(
