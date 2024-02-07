@@ -9,7 +9,8 @@ const API_KEY = "6d2c5466092de2babc8fd56a62672dee";
 
 const createWeatherCard = (cityName, weatherItem, index) => {
     const tempInFahrenheit = ((weatherItem.main.temp - 273.15) * 9/5) + 32;
-   
+    
+
     if (index === 0) {
         return `<div class="details">
                     <h2>${cityName} (${weatherItem.dt_txt.split(" ")[0]})</h2>
@@ -39,13 +40,56 @@ const saveLastSearchedCity = (cityName) => {
 const getLastSearchedCity = () => {
     return localStorage.getItem("lastSearchedCity") || "";
 }
+// Function to get the last searched cities from local storage
+const getLastSearchedCities = () => {
+    const cities = localStorage.getItem("lastSearchedCities");
+    return cities ? JSON.parse(cities) : [];
+}
+
+// Function to render last searched cities in the UI
+const renderLastSearchedCities = () => {
+    const lastSearchedCities = getLastSearchedCities();
+    const lastSearchedCitiesContainer = document.getElementById("lastSearchedCitiesContainer");
+    lastSearchedCitiesContainer.innerHTML = ""; // Clear previous list
+
+    lastSearchedCities.forEach(city => {
+        const cityElement = document.createElement("div");
+        cityElement.textContent = city;
+        cityElement.classList.add("last-searched-city");
+        lastSearchedCitiesContainer.appendChild(cityElement);
+
+        // Add event listener to each last searched city element
+        cityElement.addEventListener("click", () => {
+            getCityCoordinates(city); // Fetch weather details for the clicked city
+        });
+    });
+}
+
+// Function to save the last searched cities to local storage
+const saveLastSearchedCities = (cities) => {
+    localStorage.setItem("lastSearchedCities", JSON.stringify(cities));
+}
+
+// Function to add a new city to the last searched cities list
+const addCityToLastSearched = (cityName) => {
+    let cities = getLastSearchedCities();
+    cities.unshift(cityName); // Add the new city to the beginning of the array
+    if (cities.length > 5) {
+        cities = cities.slice(0, 5); // Keep only the last 5 cities
+    }
+    saveLastSearchedCities(cities);
+    renderLastSearchedCities(); // Render updated last searched cities list
+}
+
+
 
 const getWeatherDetails = async (cityName, latitude, longitude) => {
-    const WEATHER_API_URL = `https://api.openweathermap.org/data/2.5/forecast?lat=${latitude}&lon=${longitude}&=units.imperial&appid=${API_KEY}`;
+    
+    const WEATHER_API_URL = `https://api.openweathermap.org/data/2.5/forecast?lat=${latitude}&lon=${longitude}&appid=${API_KEY}`;
 
     try {
         const response = await fetch(WEATHER_API_URL);
-        console.log("I work")
+       
         const data = await response.json();
 
         const uniqueForecastDays = [];
@@ -101,7 +145,7 @@ const getGeoCoordinates = () => {
         navigator.geolocation.getCurrentPosition(
             position => {
                 const{ latitude, longitude } = position.coords;
-                const API_URL = `https://api.openweathermap.org/geo/1.0/reverse?lat=${latitude}&lon=${longitude}&=units.imperial&limit=1&appid=${API_KEY}`;
+                const API_URL = `https://api.openweathermap.org/geo/1.0/reverse?lat=${latitude}&lon=${longitude}&limit=1&appid=${API_KEY}`;
                 fetch(API_URL).then(response => response.json()).then(data => {
                     const { name } = data[0];
                     getWeatherDetails(name, latitude, longitude);
@@ -121,6 +165,7 @@ const getGeoCoordinates = () => {
         
         
 }
+renderLastSearchedCities();
 
 searchButton.addEventListener("click", getGeoCoordinates);
 locationButton.addEventListener("click", getGeoCoordinates);
